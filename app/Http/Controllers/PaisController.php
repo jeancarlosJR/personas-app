@@ -87,4 +87,28 @@ class PaisController extends Controller
         return view ('pais.edit' , ['pais' => $pais, 'municipios' => $municipios]);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $pais = Pais::find($id);
+
+        $pais->pais_nomb = $request->name;
+        $pais->muni_codi = $request->code;
+        $pais->save();
+
+        $paises = DB::table('tb_pais')
+        ->join('tb_municipio', 'tb_pais.pais_codi', '=' , 'tb_municipio.muni_codi')
+        ->select('tb_pais.*', 'tb_municipio.muni_nomb')
+        ->get();
+
+        return view ('pais.index' , ['paises' => $paises]);
+    }
+
 }
+
