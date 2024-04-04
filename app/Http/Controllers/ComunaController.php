@@ -38,4 +38,53 @@ class ComunaController extends Controller
         return view ('comuna.new' , ['municipios' => $municipios]);
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $comuna = new Comuna();
+        // $comuna->comu_codi = $request->id;
+        // El codigo de comuna es auto incremental
+        $comuna->comu_nomb = $request->name;
+        $comuna->muni_codi = $request->code;
+        $comuna->save();
+
+        $comunas = DB::table('tb_comuna ')
+        ->join('tb_municipio', 'tb_comuna.muni_codi', '=' , 'tb_municipio.muni_codi')
+        ->select('tb_comuna.*', 'tb_municipio.muni_nomb')
+        ->get();
+
+        return view ('comuna.index' , ['comunas' => $comunas]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $comuna = Comuna::find($id);
+        $municipios = DB::table('tb_municipio')
+        ->orderBy('muni_nomb')
+        ->get();
+
+        return view ('comuna.edit' , ['comuna' => $comuna, 'municipios' => $municipios]);
+    }
 }
